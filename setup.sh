@@ -23,7 +23,7 @@ sudo systemctl enable redis
 # install watchman
 cd ~
 sudo git clone https://github.com/roller-project/watchman.git
-cd watchman/
+cd ~/watchman/
 ./autogen.sh 
 ./configure 
 make
