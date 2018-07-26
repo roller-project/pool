@@ -1,7 +1,7 @@
 .DS_Store
 
 testnet.json
-
+/www/node_modules/
 /build/_workspace/
 /build/bin/
 watchman.sh
