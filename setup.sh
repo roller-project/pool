@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 vPATH = ~
 sudo aput-get -y update
-sudo apt-get install -y nodejs nodejs-legacy npm redis-server nginx autoconf automake build-essential python-dev
+sudo apt-get install -y nodejs nodejs-legacy npm redis-server nginx autoconf automake build-essential python-dev libtool
 sudo apt-get install -y libssl-dev git curl screen unzip wget
 sudo curl -O https://storage.googleapis.com/golang/go1.9.7.linux-amd64.tar.gz
 sudo tar -xvf go1.9.7.linux-amd64.tar.gz
