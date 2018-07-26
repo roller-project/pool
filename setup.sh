@@ -18,6 +18,19 @@ sudo chmod +x  ~/build/bin/roller-pool
 sudo systemctl enable nginx
 sudo systemctl enable redis
 
+
+
+# install watchman
+cd ~
+sudo git clone https://github.com/roller-project/watchman.git
+cd watchman/
+./autogen.sh 
+./configure 
+make
+sudo make install
+watchman --version
+echo 999999 | sudo tee -a /proc/sys/fs/inotify/max_user_watches  && echo 999999 | sudo tee -a  /proc/sys/fs/inotify/max_queued_events && echo 999999 | sudo tee  -a /proc/sys/fs/inotify/max_user_instances && watchman  shutdown-server
+
 cd ~
 
 echo '=========================='
