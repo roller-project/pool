@@ -1,8 +1,11 @@
 #!/usr/bin/env sh
 vPATH = ~
-sudo aput-get -y update
-sudo apt-get install -y nodejs nodejs-legacy npm redis-server nginx autoconf automake build-essential python-dev libtool pkg-config
+sudo apt-get -y update
+sudo apt-get install -y redis-server nginx autoconf automake build-essential python-dev libtool pkg-config make
 sudo apt-get install -y libssl-dev git curl screen unzip wget
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
 sudo curl -O https://storage.googleapis.com/golang/go1.9.7.linux-amd64.tar.gz
 sudo tar -xvf go1.9.7.linux-amd64.tar.gz
 sudo mv go /usr/local
@@ -60,13 +63,13 @@ upstream api {
 server {
 	listen 0.0.0.0:80;
 
-	root ${vPATH}/pool/www/dist;
+	root /opt/pool/www/dist;
 	index index.html index.htm;
 
 	server_name localhost domain.com www.domain.com;
 
 	location /api {
-		proxy_pass http://api;
+		proxy_pass http://ip:8080;
 	}
 
 	location / {

@@ -15,7 +15,7 @@ module.exports = function(environment) {
 
     APP: {
       // API host and port
-      ApiUrl: 'http://pool.roller.today/api/',
+      ApiUrl: 'http://ip:8080/',
 
       // HTTP mining endpoint
       HttpHost: 'http://pool.roller.today',
