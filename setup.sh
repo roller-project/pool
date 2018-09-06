@@ -1,40 +1,29 @@
-#!/usr/bin/env sh
-vPATH = ~
-sudo apt-get -y update
-sudo apt-get install -y redis-server nginx autoconf automake build-essential python-dev libtool pkg-config make
-sudo apt-get install -y libssl-dev git curl screen unzip wget
+#!/bin/sh
+
+echo "Installing required packages"
+
+sudo apt-get update
+sudo apt-get -y upgrade
+sudo apt-get -y dist-upgrade
+sudo apt-get -y install build-essential golang-1.10-go unzip redis-server nginx screen
+sudo ln -s /usr/lib/go-1.10/bin/go /usr/local/bin/go
 curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 sudo apt-get install -y nodejs
-
-sudo curl -O https://storage.googleapis.com/golang/go1.9.7.linux-amd64.tar.gz
-sudo tar -xvf go1.9.7.linux-amd64.tar.gz
-sudo mv go /usr/local
-sudo echo 'export PATH=$PATH:/usr/local/go/bin' > ~/.profile
-source ~/.profile
-cd ~
-git clone https://github.com/roller-project/pool.git
-cd ~/pool
-sudo make
-sudo mv ~/build/bin/open-ethereum-pool ~/build/bin/roller-pool
-sudo chmod +x  ~/build/bin/roller-pool
-#enable service
 sudo systemctl enable nginx
 sudo systemctl enable redis
 
 
+echo "Installing Roller Pool Software"
 
-# install watchman
-cd ~
-sudo git clone https://github.com/roller-project/watchman.git
-cd ~/watchman/
-./autogen.sh 
-./configure 
-make
-sudo make install
-watchman --version
-echo 999999 | sudo tee -a /proc/sys/fs/inotify/max_user_watches  && echo 999999 | sudo tee -a  /proc/sys/fs/inotify/max_queued_events && echo 999999 | sudo tee  -a /proc/sys/fs/inotify/max_user_instances && watchman  shutdown-server
+git clone https://github.com/roller-project/pool.git
+cd pool
+make all
+sudo cp build/bin/open-ethereum-pool /usr/local/bin/roller-pool
+sudo cp -R ./www /var/www/pool
+sudo cp ./config.json /var/www/pool/config.json
 
-cd ~
+echo "Done installing Roller Geth & Roller Pool Software!, Please configure your pool with the following instructions on https://roller.today"
+
 
 echo '=========================='
 echo 'Configuring pool service...'
@@ -44,13 +33,15 @@ cat > ~/pool.service << EOL
 Description=Roller Pool
 
 [Service]
-ExecStart=${vPATH}/build/bin/roller-pool ${vPATH}/config.json
+ExecStart=/usr/local/bin/roller-pool /var/www/pool/config.json
 Restart=always
 
 [Install]
 WantedBy=default.target
 EOL
 
+sudo \mv ~/pool.service /etc/systemd/system/pool.service
+sudo systemctl enable pool
 
 echo '=========================='
 echo 'Configuring nginx service...'
@@ -63,13 +54,13 @@ upstream api {
 server {
 	listen 0.0.0.0:80;
 
-	root /opt/pool/www/dist;
+	root /var/www/pool/dist;
 	index index.html index.htm;
 
 	server_name localhost domain.com www.domain.com;
 
 	location /api {
-		proxy_pass http://ip:8080;
+		proxy_pass http://api;
 	}
 
 	location / {
@@ -77,3 +68,6 @@ server {
 	}
 }
 EOL
+
+sudo \mv ~/pool-nginx.conf /etc/nginx/site-enable/pool-nginx.conf
+sudo systemctl restart nginx
