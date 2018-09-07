@@ -69,5 +69,5 @@ server {
 }
 EOL
 
-sudo \mv ~/pool-nginx.conf /etc/nginx/site-enable/pool-nginx.conf
+sudo \mv ~/pool-nginx.conf /etc/nginx/sites-enabled/pool-nginx.conf
 sudo systemctl restart nginx
